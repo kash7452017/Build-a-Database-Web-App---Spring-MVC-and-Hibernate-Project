@@ -272,6 +272,64 @@ public class CustomerDAOImpl implements CustomerDAO {
 **list-customers.jsp**
 
 **添加JSTL標籤的引用，創建表單顯示頁面，包含添加成員功能、刪除與更新按鈕以及成員資料顯示表格，並引用resources底下CSS樣式為表單進行美化，**
+
+**在項目標頭加入排序功能鏈結，依點選的項目作為排序依據並轉向到/customer/list映射方法，並攜帶sort參數(排序方式)**
+```
+<!-- setup header links for sorting -->
+
+<!-- construct a sort link for first name -->
+<c:url var="sortLinkFirstName" value="/customer/list">
+    <c:param name="sort" value="<%= Integer.toString(SortUtils.FIRST_NAME) %>" />
+</c:url>                    
+
+<!-- construct a sort link for last name -->
+c:url var="sortLinkLastName" value="/customer/list">
+   <c:param name="sort" value="<%= Integer.toString(SortUtils.LAST_NAME) %>" />
+ </c:url>                    
+
+<!-- construct a sort link for email -->
+<c:url var="sortLinkEmail" value="/customer/list">
+    <c:param name="sort" value="<%= Integer.toString(SortUtils.EMAIL) %>" />
+</c:url>
+
+<tr>
+    <th><a href="${sortLinkFirstName}">First Name</a></th>
+    <th><a href="${sortLinkLastName}">Last Name</a></th>
+    <th><a href="${sortLinkEmail}">Email</a></th>
+    <th>Action</th>
+</tr>
+```
+
+**添加成員按鈕，點選時透過showFormForAdd映射方法轉向到添加表單頁面**
+```
+<!-- put new button Add Customer -->
+<input type="button" value="Add Customer"
+       onclick="window.location.href='showFormForAdd'; return false;"
+       class="add-button"
+/>
+```
+
+**添加成員更新與刪除功能鏈結，並且將ID嵌入參數中(customerId)，在控制器映射方法中會根據回傳的ID，在更新表單中預先處理並填入對應數據於欄位中**
+```
+<!-- construct an "update" link with customer id -->
+<c:url var="updateLink" value="/customer/showFormForUpdate">
+    <c:param name="customerId" value="${tempCustomer.id}" />
+</c:url>
+
+<!-- construct an "delete" link with customer id -->
+<c:url var="deleteLink" value="/customer/delete">
+    <c:param name="customerId" value="${tempCustomer.id}" />
+</c:url>
+
+<td>
+    <!-- display the update link -->
+    <a href="${updateLink}">Update</a>
+    |
+    <a href="${deleteLink}"
+       onclick="if (!(confirm('Are you sure want to delete this customer?'))) return false">Delete</a>
+</td>
+```
+**完整程式碼**
 ```
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
